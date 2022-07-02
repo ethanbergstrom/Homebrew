@@ -4,7 +4,7 @@
 	GUID = '59259a02-2afd-4016-ab22-9afd91fdc6ea'
 	Author = 'Ethan Bergstrom'
 	Copyright = ''
-	Description = 'Package Management (OneGet) provider that facilitates installing Homebrew packages from any NuGet repository.'
+	Description = 'Package Management (OneGet) provider that facilitates installing Homebrew packages from any Git-based repository.'
 	# Refuse to load in CoreCLR if PowerShell below 7.0.1 due to regressions with how 7.0 loads PackageManagement DLLs
 	# https://github.com/PowerShell/PowerShell/pull/12203
 	PowerShellVersion = '7.0.1'
