@@ -77,7 +77,7 @@ Describe 'pipeline-based package installation and uninstallation' {
 			Find-Package -Provider $Homebrew -Name $package -Source $source | Install-Package -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 		It 'finds and silently uninstalls the locally installed package just installed' {
-			Get-Package -Provider $Homebrew -Name $package -Source $source | Uninstall-Package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+			Get-Package -Provider $Homebrew -Name $package | Uninstall-Package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 	}
 	Context 'cask' {
@@ -106,7 +106,7 @@ Describe 'version tests' {
 			Find-Package -Provider $Homebrew -Name $package -Source $source -MinimumVersion $version | Where-Object {$_.Name -contains $package} | Should -HaveCount 1
 		}
 		It 'retrieves and correctly filters versions below an invalid maximum' {
-			Find-Package -Provider $Homebrew -Name $package -Source $source -MaximumVersion $version | Where-Object {$_.Name -contains $package} | Should -HaveCount 0
+			Find-Package -Provider $Homebrew -Name $package -Source $source -MaximumVersion $version -ErrorAction SilentlyContinue | Where-Object {$_.Name -contains $package} | Should -HaveCount 0
 		}
 	}
 	Context 'cask' {
@@ -119,7 +119,7 @@ Describe 'version tests' {
 			Find-Package -Provider $Homebrew -Name $package -MinimumVersion $version | Where-Object {$_.Name -contains $package} | Should -HaveCount 1
 		}
 		It 'retrieves and correctly filters versions below an invalid maximum' {
-			Find-Package -Provider $Homebrew -Name $package -MaximumVersion $version | Where-Object {$_.Name -contains $package} | Should -HaveCount 0
+			Find-Package -Provider $Homebrew -Name $package -MaximumVersion $version -ErrorAction SilentlyContinue | Where-Object {$_.Name -contains $package} | Should -HaveCount 0
 		}
 	}
 }

@@ -28,13 +28,13 @@ function Test-PackageVersion {
 
 	# User specified a specific version - it either matches or it doesn't
 	if ($RequiredVersion) {
-		return $Package.Version -eq [System.Version]$RequiredVersion
+		return $Package.Version -eq $RequiredVersion
 	}
 
 	# Conditional filtering of the version based on optional minimum and maximum version requirements
 	(-Not $MinimumVersion -Or (
-		$Package.Version -ge [System.Version]$MinimumVersion
+		$Package.Version -ge $MinimumVersion
 	)) -And (-Not $MaximumVersion -Or (
-		$Package.Version -le [System.Version]$MaximumVersion
+		$Package.Version -le $MaximumVersion
 	))
 }
