@@ -36,8 +36,10 @@ jobs:
       #   shell: pwsh
       #   run: Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/ethanbergstrom/Croze/master/Install-Homebrew.ps1'))
       - name: Install Croze
+        shell: pwsh
         run: Install-Module Croze -Force
       - name: Test with Pester
+        shell: pwsh
         run: |
           Invoke-Pester -Configuration (New-PesterConfiguration -Hashtable @{
             Run = @{
