@@ -128,7 +128,7 @@ Describe "multi-source support" {
 	BeforeAll {
 		$altSourceName = 'pyroscope-io/brew'
 		$altSourceLocation = 'https://github.com/pyroscope-io/homebrew-brew'
-		$package = Join-Path -path $altSourceName -ChildPath 'pyroscope'
+		$package = 'pyroscope'
 
 		Unregister-PackageSource -Name $altSourceName -Provider $Homebrew -ErrorAction SilentlyContinue
 	}
