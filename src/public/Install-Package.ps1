@@ -31,9 +31,9 @@ function Install-Package {
 
 	# Validate what Homebrew installed matched what we requested, then convert the PSCustomObject output from Croze into PackageManagement SWIDs
 	# For reasons I don't fully understand, Homebrew sometimes writes non-error informational output to stderr
-	# PowerShell will see this and think an error has occured, and return a non-zero exit code. 
+	# PowerShell will see this and think an error has occured, and return a non-zero exit code.
 	# Therefore, we unfortunately need to suppress otherwise-helpful error output in the provider.
-	# We can't suppress it in Croze because Crescendo doesn't support that. 
+	# We can't suppress it in Croze because Crescendo doesn't support that.
 	$swid = Croze\Install-HomebrewPackage -Name ($Matches.source+'/'+$Matches.name) 2>$null | ConvertTo-SoftwareIdentity
 
 	if (-Not $swid) {
