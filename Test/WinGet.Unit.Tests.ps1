@@ -7,11 +7,6 @@ BeforeAll {
 }
 
 Describe 'basic package search operations' {
-	Context 'generic' {
-		It 'gets a list of latest installed packages' {
-			Get-Package -Provider $Homebrew | Should -Not -BeNullOrEmpty
-		}
-	}
 	Context 'formula' {
 		BeforeAll {
 			$package = 'tmux'
