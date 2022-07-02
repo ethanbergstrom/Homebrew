@@ -20,15 +20,8 @@ function Uninstall-Package {
 			-ErrorCategory InvalidArgument
 	}
 
-	$WinGetParams = @{
-		ID = $Matches.name
-		Source = $Matches.source
-	}
+	Croze\Uninstall-HomebrewPackage -Name $Matches.name
 
-	Cobalt\Uninstall-WinGetPackage @WinGetParams
-
-	# Cobalt doesn't return any output on successful uninstallation, so we have to make up a new SWID to satisfy PackageManagement
-	# Cobalt/WinGet doesn't take verion information on uninstall, but the SWID needs it
-	$WinGetParams.Version = $Matches.version
-	ConvertTo-SoftwareIdentity -InputObject @($WinGetParams)
+	# Croze doesn't return any output on successful uninstallation, so we have to make up a new SWID to satisfy PackageManagement
+	ConvertTo-SoftwareIdentity -InputObject $Matches
 }

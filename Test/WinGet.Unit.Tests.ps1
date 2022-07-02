@@ -2,110 +2,160 @@
 param()
 
 BeforeAll {
-	$WinGet = 'WinGet'
-	Import-PackageProvider $WinGet
+	$Homebrew = 'Homebrew'
+	Import-PackageProvider $Homebrew
 }
 
 Describe 'basic package search operations' {
-	Context 'without additional arguments' {
+	Context 'formula' {
 		BeforeAll {
-			$package = 'CPUID.HWMonitor'
-			$version = '1.44'
+			$package = 'tmux'
+			$source = 'homebrew/core'
 		}
 
 		It 'gets a list of latest installed packages' {
-			Get-Package -Provider $WinGet | Where-Object {$_.Source -eq 'winget'} | Should -Not -BeNullOrEmpty
+			Get-Package -Provider $Homebrew | Should -Not -BeNullOrEmpty
 		}
 		It 'searches for the latest version of a package' {
-			Find-Package -Provider $WinGet -Name $package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+			Find-Package -Provider $Homebrew -Name $package -Source $source | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
-		It 'returns all available versions of a package' {
-			Find-Package -Provider $WinGet -Name $package -AllVersions | Where-Object {$_.Version -eq $version} | Should -Not -BeNullOrEmpty
+	}
+	Context 'cask' {
+		BeforeAll {
+			$package = 'vlc'
 		}
-		It 'returns additional package metadata' {
-			Find-Package -Provider $WinGet -Name $package -Detailed | Select-Object -ExpandProperty FullPath | Should -Not -BeNullOrEmpty
+
+		It 'gets a list of latest installed packages' {
+			Get-Package -Provider $Homebrew | Should -Not -BeNullOrEmpty
 		}
-		It 'searches for all versions of a package' {
-			Find-Package -Provider $WinGet -Name $package -AllVersions | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+		It 'searches for the latest version of a package' {
+			Find-Package -Provider $Homebrew -Name $package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 	}
 }
 
 Describe 'DSC-compliant package installation and uninstallation' {
-	Context 'without additional arguments' {
+	Context 'formula' {
 		BeforeAll {
-			$package = 'CPUID.HWMonitor'
-			$version = '1.44'
+			$package = 'tmux'
+			$source = 'homebrew/core'
 		}
 
 		It 'searches for a specific version of a package' {
-			Find-Package -Provider $WinGet -Name $package -RequiredVersion $version | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+			Find-Package -Provider $Homebrew -Name $package -Source $source | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 		It 'silently installs a specific version of a package' {
-			Install-Package -Provider $WinGet -Name $package -RequiredVersion $version -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+			Install-Package -Provider $Homebrew -Name $package -Source $source -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 		It 'finds the locally installed package just installed' {
-			Get-Package -Provider $WinGet -Name $package -RequiredVersion $version | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+			Get-Package -Provider $Homebrew -Name $package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 		It 'silently uninstalls the locally installed package just installed' {
-			Uninstall-Package -Provider $WinGet -Name $package -RequiredVersion $version | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+			Uninstall-Package -Provider $Homebrew -Name $package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+		}
+	}
+	Context 'cask' {
+		BeforeAll {
+			$package = 'vlc'
+		}
+
+		It 'searches for a specific version of a package' {
+			Find-Package -Provider $Homebrew -Name $package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+		}
+		It 'silently installs a specific version of a package' {
+			Install-Package -Provider $Homebrew -Name $package -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+		}
+		It 'finds the locally installed package just installed' {
+			Get-Package -Provider $Homebrew -Name $package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+		}
+		It 'silently uninstalls the locally installed package just installed' {
+			Uninstall-Package -Provider $Homebrew -Name $package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 	}
 }
 
 Describe 'pipeline-based package installation and uninstallation' {
-	Context 'without additional arguments' {
+	Context 'formula' {
 		BeforeAll {
-			$package = 'CPUID.HWMonitor'
+			$package = 'tmux'
+			$source = 'homebrew/core'
 		}
 
 		It 'searches for and silently installs the latest version of a package' {
-			Find-Package -Provider $WinGet -Name $package | Install-Package -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+			Find-Package -Provider $Homebrew -Name $package -Source $source | Install-Package -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 		It 'finds and silently uninstalls the locally installed package just installed' {
-			Get-Package -Provider $WinGet -Name $package | Uninstall-Package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+			Get-Package -Provider $Homebrew -Name $package -Source $source | Uninstall-Package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+		}
+	}
+	Context 'cask' {
+		BeforeAll {
+			$package = 'vlc'
+		}
+
+		It 'searches for and silently installs the latest version of a package' {
+			Find-Package -Provider $Homebrew -Name $package | Install-Package -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+		}
+		It 'finds and silently uninstalls the locally installed package just installed' {
+			Get-Package -Provider $Homebrew -Name $package | Uninstall-Package | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 		}
 	}
 }
 
 Describe 'version tests' {
-	Context 'without additional arguments' {
+	Context 'formula' {
 		BeforeAll {
-			$package = 'CPUID.HWMonitor'
-			$minVersion = '1.43'
-			$maxVersion = '1.44'
+			$package = 'tmux'
+			$source = 'homebrew/core'
+			$version = '2.0'
 		}
 
-		It 'retrieves and correctly filters versions within a range' {
-			Find-Package -Provider $WinGet -Name $package -MaximumVersion $maxVersion -MinimumVersion $minVersion -AllVersions | Where-Object {$_.Name -contains $package} | Should -HaveCount 2
+		It 'retrieves and correctly filters versions above a valid minimum' {
+			Find-Package -Provider $Homebrew -Name $package -Source $source -MinimumVersion $version | Where-Object {$_.Name -contains $package} | Should -HaveCount 1
+		}
+		It 'retrieves and correctly filters versions below an invalid maximum' {
+			Find-Package -Provider $Homebrew -Name $package -Source $source -MaximumVersion $version | Where-Object {$_.Name -contains $package} | Should -HaveCount 0
+		}
+	}
+	Context 'cask' {
+		BeforeAll {
+			$package = 'vlc'
+			$version = '2.0'
+		}
+
+		It 'retrieves and correctly filters versions above a valid minimum' {
+			Find-Package -Provider $Homebrew -Name $package -MinimumVersion $version | Where-Object {$_.Name -contains $package} | Should -HaveCount 1
+		}
+		It 'retrieves and correctly filters versions below an invalid maximum' {
+			Find-Package -Provider $Homebrew -Name $package -MaximumVersion $version | Where-Object {$_.Name -contains $package} | Should -HaveCount 0
 		}
 	}
 }
 
 Describe "multi-source support" {
 	BeforeAll {
-		$altSourceName = 'AltWinGetSource'
-		$altSourceLocation = 'https://winget.azureedge.net/cache'
-		$package = 'CPUID.HWMonitor'
-		$version = '1.44'
+		$altSourceName = 'pyroscope-io/brew'
+		$altSourceLocation = 'https://github.com/pyroscope-io/homebrew-brew'
+		$package = Join-Path -path $altSourceName -ChildPath 'pyroscope'
 
-		Unregister-PackageSource -Name $altSourceName -Provider $WinGet -ErrorAction SilentlyContinue
+		Unregister-PackageSource -Name $altSourceName -Provider $Homebrew -ErrorAction SilentlyContinue
 	}
 	AfterAll {
-		Unregister-PackageSource -Name $altSourceName -Provider $WinGet -ErrorAction SilentlyContinue
+		Unregister-PackageSource -Name $altSourceName -Provider $Homebrew -ErrorAction SilentlyContinue
 	}
 
 	It 'refuses to register a source with no location' {
-		Register-PackageSource -Name $altSourceName -Provider $WinGet -ErrorAction SilentlyContinue | Where-Object {$_.Name -eq $altSourceName} | Should -BeNullOrEmpty
+		Register-PackageSource -Name $altSourceName -Provider $Homebrew -ErrorAction SilentlyContinue | Where-Object {$_.Name -eq $altSourceName} | Should -BeNullOrEmpty
 	}
 	It 'registers an alternative package source' {
-		Register-PackageSource -Name $altSourceName -Provider $WinGet -Location $altSourceLocation | Where-Object {$_.Name -eq $altSourceName} | Should -Not -BeNullOrEmpty
+		Register-PackageSource -Name $altSourceName -Provider $Homebrew -Location $altSourceLocation | Where-Object {$_.Name -eq $altSourceName} | Should -Not -BeNullOrEmpty
 	}
 	It 'searches for and installs the latest version of a package from an alternate source' {
-		Find-Package -Provider $WinGet -Name $package -Source $altSourceName -RequiredVersion $version | Install-Package -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
+		Find-Package -Provider $Homebrew -Name $package -Source $altSourceName | Install-Package -Force | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
 	}
 	It 'unregisters an alternative package source' {
-		Unregister-PackageSource -Name $altSourceName -Provider $WinGet
-		Get-PackageSource -Provider $WinGet | Where-Object {$_.Name -eq $altSourceName} | Should -BeNullOrEmpty
+		Unregister-PackageSource -Name $altSourceName -Provider $Homebrew
+		Get-PackageSource -Provider $Homebrew | Where-Object {$_.Name -eq $altSourceName} | Should -BeNullOrEmpty
 	}
 }
+

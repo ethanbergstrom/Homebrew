@@ -26,5 +26,5 @@ function Find-Package {
 		Clear-Variable 'RequiredVersion'
 	}
 
-	Find-WinGetPackage -Name $Name -RequiredVersion $RequiredVersion -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
+	Find-HomebrewPackage -Name $Name -RequiredVersion $RequiredVersion -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
 }

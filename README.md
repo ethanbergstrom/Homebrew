@@ -1,109 +1,97 @@
-[![CI](https://github.com/ethanbergstrom/winget/actions/workflows/CI.yml/badge.svg)](https://github.com/ethanbergstrom/winget/actions/workflows/CI.yml)
+[![CI](https://github.com/ethanbergstrom/Homebrew/actions/workflows/CI.yml/badge.svg)](https://github.com/ethanbergstrom/Homebrew/actions/workflows/CI.yml)
 
-# WinGet for PackageManagement
-WinGet for PackageManagement facilitates installing WinGet packages from any compatible repository. The provider is heavily influenced by the work of the [ChocolateyGet](https://github.com/jianyunt/ChocolateyGet) project.
+# Homebrew for PackageManagement
+Homebrew for PackageManagement facilitates installing Homebrew packages from any compatible repository. The provider is heavily influenced by the work of the [ChocolateyGet](https://github.com/jianyunt/ChocolateyGet) project.
 
-## Requirements
-Your machine must have at least Windows 10 1709 or Windows 11 and either PowerShell 5.1+ or PowerShell 7.0.1+, and the WinGet CLI utility installed. It may be already installed on your machine, but if not, Microsoft's recommended method for installing WinGet is via the Microsoft Store as part of the [App Installer](https://www.microsoft.com/en-us/p/app-installer/9nblggh4nns1?activetab=pivot:overviewtab) package.
-
-**The WinGet Package Management Provider does not install the WinGet CLI utility. Please make sure the WinGet CLI utility is functional before attempting to use the WinGet PackageManagement provider!**
-
-## Install WinGet
+## Install Homebrew
 ```PowerShell
-Install-PackageProvider WinGet -Force
+Install-PackageProvider Homebrew -Force
 ```
 Note: Please do **not** use `Import-Module` with Package Management providers, as they are not meant to be imported in that manner. Either use `Import-PackageProvider` or specify the provider name with the `-Provider` argument to the PackageManagement cmdlets, such as in the examples below:
 
 ## Sample usages
 ### Search for a package
 ```PowerShell
-Find-Package OpenJS.NodeJS -Provider WinGet
+Find-Package vlc -Provider Homebrew
 
-Find-Package Mozilla.Firefox -Provider WinGet -Detailed
-```
-
-### Find all available versions of a package
-```PowerShell
-Find-Package Mozilla.Firefox -Provider WinGet -AllVersions
+Find-Package tmux -Source homebrew/core -Provider Homebrew -Detailed
 ```
 
 ### Install a package
 ```PowerShell
-Find-Package OpenJS.NodeJS -Provider WinGet | Install-Package -Force
+Find-Package vlc -Provider Homebrew | Install-Package -Force
 
-Install-Package Git.Git -Provider WinGet -Force
+Install-Package tmux -Source homebrew/core -Provider Homebrew -Force
 ```
 
 ### Get list of installed packages (with wildcard search support)
 ```PowerShell
-Get-Package Microsoft.* -Provider WinGet
+Get-Package Microsoft* -Provider Homebrew
 ```
 
 ### Uninstall a package
 ```PowerShell
-Get-Package OpenJS.NodeJS -Provider WinGet | Uninstall-Package
+Get-Package vlc -Provider Homebrew | Uninstall-Package
 
-Uninstall-Package Git.Git -Provider WinGet
+Uninstall-Package tmux -Provider Homebrew
 ```
 
 ### Manage package sources
 ```PowerShell
-Register-PackageSource privateRepo -Provider WinGet -Location 'https://somewhere/out/there/cache'
-Find-Package OpenJS.NodeJS -Provider WinGet -Source privateRepo | Install-Package
-Unregister-PackageSource privateRepo -Provider WinGet
+Register-PackageSource pyroscope-io/brew -Provider Homebrew -Location 'https://github.com/pyroscope-io/homebrew-brew'
+Find-Package pyroscope -Provider Homebrew -Source pyroscope-io/brew | Install-Package
+Unregister-PackageSource pyroscope-io/brew -Provider Homebrew
 ```
-
-The WinGet PackageManagement provider integrates with WinGet.exe to manage and store package source information.
 
 ## DSC Compatibility
 Fully compatible with the PackageManagement DSC resources
 ```PowerShell
 Configuration MyNode {
 	Import-DscResource PackageManagement,PackageManagementSource
-	PackageManagement WinGet {
-		Name = 'WinGet'
+	PackageManagement Homebrew {
+		Name = 'Homebrew'
 		Source = 'PSGallery'
 	}
-	PackageManagementSource WinGetPrivateRepo {
-		Name = 'privateRepo'
-		ProviderName = 'WinGet'
-		SourceLocation = 'https://somewhere/out/there/cache'
+	PackageManagementSource PyroscopeRepo {
+		Name = 'pyroscope-io/brew'
+		ProviderName = 'Homebrew'
+		SourceLocation = 'https://github.com/pyroscope-io/homebrew-brew'
 		InstallationPolicy = 'Trusted'
-		DependsOn = '[PackageManagement]WinGet'
+		DependsOn = '[PackageManagement]Homebrew'
 	}
-	PackageManagement NodeJS {
-		Name = 'OpenJS.NodeJS'
-		Source = 'privateRepo'
-		DependsOn = '[PackageManagementSource]WinGetPrivateRepo'
+	PackageManagement Pyroscope {
+		Name = 'pyroscope'
+		Source = 'pyroscope-io/brew'
+		DependsOn = '[PackageManagementSource]PyroscopeRepo'
 	}
 }
 ```
 
 ## Keep packages up to date
-A common complaint of PackageManagement/OneGet is it doesn't allow for updating installed packages, while WinGet does.
-In order to reconcile the two, WinGet has a reserved keyword 'latest' that when passed as a Required Version can compare the version of what's currently installed against what's in the repository.
+A common complaint of PackageManagement/OneGet is it doesn't allow for updating installed packages, while Homebrew does.
+In order to reconcile the two, Homebrew has a reserved keyword 'latest' that when passed as a Required Version can compare the version of what's currently installed against what's in the repository.
 ```PowerShell
 
-PS C:\Users\ethan> Get-Package OpenJS.NodeJS -Provider WinGet
+PS C:\Users\ethan> Get-Package vlc -Provider Homebrew
 
 Name                           Version          Source           Summary
 ----                           -------          ------           -------
-OpenJS.NodeJS                  16.0.0           winget
+vlc                            3.0.16.0         Homebrew
 
-PS C:\Users\ethan> Get-Package OpenJS.NodeJS -Provider WinGet -RequiredVersion latest
-Get-Package : No package found for 'OpenJS.NodeJS'.
+PS C:\Users\ethan> Get-Package vlc -Provider Homebrew -RequiredVersion latest
+Get-Package : No package found for 'vlc'.
 
-PS C:\Users\ethan> Install-Package OpenJS.NodeJS -Provider WinGet -Force
-
-Name                           Version          Source           Summary
-----                           -------          ------           -------
-OpenJS.NodeJS                  17.2.0           winget
-
-PS C:\Users\ethan> Get-Package OpenJS.NodeJS -Provider WinGet -RequiredVersion latest
+PS C:\Users\ethan> Install-Package vlc -Provider Homebrew -Force
 
 Name                           Version          Source           Summary
 ----                           -------          ------           -------
-OpenJS.NodeJS                  17.2.0           winget
+vlc                            3.0.17.3         Homebrew
+
+PS C:\Users\ethan> Get-Package vlc -Provider Homebrew -RequiredVersion latest
+
+Name                           Version          Source           Summary
+----                           -------          ------           -------
+vlc                            3.0.17.3         Homebrew
 
 ```
 
@@ -111,68 +99,59 @@ This feature can be combined with a PackageManagement-compatible configuration m
 ```PowerShell
 Configuration MyNode {
 	Import-DscResource PackageManagement
-	PackageManagement WinGet {
-		Name = 'WinGet'
+	PackageManagement Homebrew {
+		Name = 'Homebrew'
 		Source = 'PSGallery'
 	}
-	PackageManagement NodeJS {
-		Name = 'OpenJS.NodeJS'
+	PackageManagement VLC {
+		Name = 'vlc'
 		RequiredVersion = 'latest'
-		ProviderName = 'WinGet'
-		DependsOn = '[PackageManagement]WinGet'
+		ProviderName = 'Homebrew'
+		DependsOn = '[PackageManagement]Homebrew'
 	}
 }
 ```
 
-**Please note** - Since PackageManagement doesn't support passing source information when invoking `Get-Package`, the 'latest' functionality **will not work** if the default WinGet package source is removed as a source **and** multiple custom sources are defined.
+**Please note** - Since PackageManagement doesn't support passing source information when invoking `Get-Package`, the 'latest' functionality **will not work** if the default Homebrew package source is removed as a source **and** multiple custom sources are defined.
 
-Furthermore, if both the default WinGet package source and a custom source are configured, the custom source **will be ignored** when the 'latest' required version is used with `Get-Package`.
+Furthermore, if both the default Homebrew package source and a custom source are configured, the custom source **will be ignored** when the 'latest' required version is used with `Get-Package`.
 
 Example PowerShell DSC configuration using the 'latest' required version with a custom source:
 
 ```PowerShell
 Configuration MyNode {
 	Import-DscResource PackageManagement,PackageManagementSource
-	PackageManagement WinGet {
-		Name = 'WinGet'
+	PackageManagement Homebrew {
+		Name = 'Homebrew'
 		Source = 'PSGallery'
 	}
-	PackageManagementSource WinGetPrivateRepo {
-		Name = 'privateRepo'
-		ProviderName = 'WinGet'
-		SourceLocation = 'https://somewhere/out/there/cache'
+	PackageManagementSource PyroscopeRepo {
+		Name = 'pyroscope-io/brew'
+		ProviderName = 'Homebrew'
+		SourceLocation = 'https://github.com/pyroscope-io/homebrew-brew'
 		InstallationPolicy = 'Trusted'
-		DependsOn = '[PackageManagement]WinGet'
+		DependsOn = '[PackageManagement]Homebrew'
 	}
-	PackageManagementSource WinGetRepo {
-		Name = 'WinGet'
-		ProviderName = 'WinGet'
+	PackageManagementSource HomebrewRepo {
+		Name = 'homebrew/cask'
+		ProviderName = 'Homebrew'
 		Ensure = 'Absent'
-		DependsOn = '[PackageManagement]WinGet'
+		DependsOn = '[PackageManagement]Homebrew'
 	}
 	# The source information wont actually be used by the Get-Package step of the PackageManagement DSC resource check, but it helps make clear to the reader where the package should come from
-	PackageManagement NodeJS {
-		Name = 'OpenJS.NodeJS'
-		ProviderName = 'WinGet'
-		Source = 'privateRepo'
+	PackageManagement Pyroscope {
+		Name = 'pyroscope'
+		ProviderName = 'Homebrew'
+		Source = 'pyroscope-io/brew'
 		RequiredVersion = 'latest'
-		DependsOn = @('[PackageManagementSource]WinGetPrivateRepo', '[PackageManagementSource]WinGetRepo')
+		DependsOn = @('[PackageManagementSource]PyroscopeRepo', '[PackageManagementSource]HomebrewRepo')
 	}
 }
 ```
 
-A working example PowerShell DSC script with automatic package updates can be found [here](https://gist.github.com/ethanbergstrom/9a4a0d29ea0452ef46bba580a7567d98).
-
 If using the 'latest' functionality, best practice is to either:
-* use the default WinGet source
-* unregister the default WinGet source in favor of a **single** custom source
-
-## Known Issues
-WinGet is still in a preview period, with many features not implemented that are required for a PackageManagement provider to be fully implemented.
-
-Unsupported features currently include:
-* Passing install arguments to packages
-* Saving a package
+* use the default Homebrew source
+* unregister the default Homebrew source in favor of a **single** custom source
 
 ## Legal and Licensing
-WinGet is licensed under the [MIT license](./LICENSE.txt).
+Homebrew is licensed under the [MIT license](./LICENSE.txt).

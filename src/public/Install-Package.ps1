@@ -29,18 +29,16 @@ function Install-Package {
 		return
 	}
 
-	$WinGetParams = @{
-		ID = $Matches.name
-		Version = $Matches.version
-		Source = $Matches.source
-	}
-
-	# Validate what WinGet installed matched what we requested, then convert the PSCustomObject output from Cobalt into PackageManagement SWIDs
-	$swid = Cobalt\Install-WinGetPackage @WinGetParams | Where-Object {Test-PackageVersion -Package $_ -RequiredVersion $WinGetParams.version -ErrorAction SilentlyContinue} | ConvertTo-SoftwareIdentity -Source $WinGetParams.Source
+	# Validate what Homebrew installed matched what we requested, then convert the PSCustomObject output from Croze into PackageManagement SWIDs
+	# For reasons I don't fully understand, Homebrew sometimes writes non-error informational output to stderr
+	# PowerShell will see this and think an error has occured, and return a non-zero exit code. 
+	# Therefore, we unfortunately need to suppress otherwise-helpful error output in the provider.
+	# We can't suppress it in Croze because Crescendo doesn't support that. 
+	$swid = Croze\Install-HomebrewPackage -Name ($Matches.source+'/'+$Matches.name) 2>$null | ConvertTo-SoftwareIdentity
 
 	if (-Not $swid) {
-		# Cobalt returned something, but not in the format we expected. Something is amiss.
-		Write-Warning ($LocalizedData.UnexpectedWinGetResponse -f $FastPackageReference)
+		# Croze returned something, but not in the format we expected. Something is amiss.
+		Write-Warning ($LocalizedData.UnexpectedHomebrewResponse -f $FastPackageReference)
 	}
 
 	$swid

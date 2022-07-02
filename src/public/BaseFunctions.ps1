@@ -1,7 +1,7 @@
 # Mandatory function for the PackageManagement providers. It returns the name of your provider.
 function Get-PackageProviderName {
 	Write-Debug ($LocalizedData.ProviderDebugMessage -f ('Get-PackageProviderName'))
-	return 'WinGet'
+	return 'Homebrew'
 }
 
 # Mandatory function for the PackageManagement providers. It initializes your provider before performing any actions.
@@ -22,11 +22,11 @@ function Get-DynamicOptions {
 	switch ($category) {
 		Package {
 			Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:AcceptLicense -ExpectedType Switch -IsRequired $false)
-			Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:Detailed -ExpectedType Switch -IsRequired $false)
+			# Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:Detailed -ExpectedType Switch -IsRequired $false)
 		}
 		Install {
 			Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:AcceptLicense -ExpectedType Switch -IsRequired $false)
-			Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:Detailed -ExpectedType Switch -IsRequired $false)
+			# Write-Output -InputObject (New-DynamicOption -Category $category -Name $script:Detailed -ExpectedType Switch -IsRequired $false)
 		}
 	}
 }

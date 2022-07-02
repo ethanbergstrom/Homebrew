@@ -24,13 +24,13 @@ function Get-InstalledPackage {
 
 	# If a user wants to check whether the latest version is installed, first check the repo for what the latest version is
 	if ($RequiredVersion -eq 'latest') {
-		$RequiredVersion = $(Find-WinGetPackage -Name $Name).Version
+		$RequiredVersion = $(Find-HomebrewPackage -Name $Name).Version
 	}
 
-	# Convert the PSCustomObject output from Cobalt into PackageManagement SWIDs, then filter results by version requirements
-	# This provides wildcard search behavior for locally installed packages, which WinGet lacks
-	Cobalt\Get-WinGetPackage |
-		Where-Object {-Not $Name -Or ($_.ID -Like $Name)} |
+	# Convert the PSCustomObject output from Croze into PackageManagement SWIDs, then filter results by version requirements
+	# This provides wildcard search behavior for locally installed packages, which Homebrew lacks
+	Croze\Get-HomebrewPackage |
+		Where-Object {-Not $Name -Or ($_.Name -Like $Name)} |
 			Where-Object {Test-PackageVersion -Package $_ -RequiredVersion $RequiredVersion -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion} |
 				ConvertTo-SoftwareIdentity
 }

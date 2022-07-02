@@ -4,7 +4,7 @@
 # Define provider related variables
 $script:AcceptLicense = "AcceptLicense"
 $script:Force = "Force"
-$script:PackageSource = "WinGet"
+$script:PackageSource = "homebrew/cask"
 $script:AllVersions = "AllVersions"
 $script:Detailed = "Detailed"
 
@@ -13,7 +13,7 @@ $script:Detailed = "Detailed"
 # See https://github.com/OneGet/oneget/wiki/PackageProvider-Interface for additional details
 $script:FastReferenceRegex = "(?<name>[^#]*)#(?<version>[^\s]*)#(?<source>[^#]*)"
 
-Import-LocalizedData LocalizedData -filename "WinGet.Resource.psd1"
+Import-LocalizedData LocalizedData -filename "Homebrew.Resource.psd1"
 
 # Dot sourcing private script files
 Get-ChildItem $ScriptPath/private -Recurse -Filter '*.ps1' -File | ForEach-Object {

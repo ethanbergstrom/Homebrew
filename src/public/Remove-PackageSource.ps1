@@ -9,9 +9,9 @@ function Remove-PackageSource {
 
 	Write-Debug ($LocalizedData.ProviderDebugMessage -f ('Remove-PackageSource'))
 
-	[array]$RegisteredPackageSources = Cobalt\Get-WinGetSource
+	[array]$RegisteredPackageSources = Croze\Get-HomebrewTap
 
-	# WinGet.exe will not error if the specified source name isn't already registered, so we will do it here instead.
+	# Homebrew.exe will not error if the specified source name isn't already registered, so we will do it here instead.
 	if (-not ($RegisteredPackageSources.Name -eq $Name)) {
 		ThrowError -ExceptionName "System.ArgumentException" `
 			-ExceptionMessage ($LocalizedData.PackageSourceNotFound -f $Name) `
@@ -19,6 +19,9 @@ function Remove-PackageSource {
 			-ErrorCategory InvalidArgument
 	}
 
-	# Cobalt will throw an exception if unregistration fails
-	Cobalt\Unregister-WinGetSource -Name $Name
+	# For reasons I don't fully understand, Homebrew sometimes writes non-error informational output to stderr
+	# PowerShell will see this and think an error has occured, and return a non-zero exit code. 
+	# Therefore, we unfortunately need to suppress otherwise-helpful error output in the provider.
+	# We can't suppress it in Croze because Crescendo doesn't support that. 
+	Croze\Unregister-HomebrewTap -Name $Name 2>$null
 }

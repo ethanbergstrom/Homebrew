@@ -4,8 +4,9 @@ function Resolve-PackageSource {
 
 	Write-Debug ($LocalizedData.ProviderDebugMessage -f ('Resolve-PackageSource'))
 
-	# Get sources from WinGet
-	Cobalt\Get-WinGetSource | ForEach-Object {
-		New-PackageSource -Name $_.Name -Location $_.Arg -Trusted $true -Registered $true
+	# Get sources from Homebrew
+	Croze\Get-HomebrewTap | Croze\Get-HomebrewTapInfo | ForEach-Object {
+		Write-Debug "Source detected: $_"
+		New-PackageSource -Name $_.Name -Location $_.Remote -Trusted $true -Registered $_.installed
 	}
 }

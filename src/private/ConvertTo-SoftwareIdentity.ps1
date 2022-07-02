@@ -1,46 +1,31 @@
-# Convert the objects returned from Cobalt into Software Identities (SWIDs).
+# Convert the objects returned from Croze into Software Identities (SWIDs).
 function ConvertTo-SoftwareIdentity {
 	[CmdletBinding()]
 	param (
 		[Parameter(ValueFromPipeline)]
 		[object[]]
-		$InputObject,
-
-		[Parameter()]
-		[string]
-		$Source
+		$InputObject
 	)
 
 	process {
 		Write-Debug ($LocalizedData.ProviderDebugMessage -f ('ConvertTo-SoftwareIdentity'))
 		foreach ($package in $InputObject) {
-			# Return a new SWID based on the output from Cobalt
-			$packageSource = $(
-				if ($package.source) {
-					$package.source
-				} elseif ($Source) {
-					$Source
-				}
-			)
-			if ($packageSource) {
-				Write-Debug "Package identified: $($package.ID), $($package.version), $($packageSource)"
-				$swid = @{
-					FastPackageReference = $package.ID+"#"+ $package.version+"#"+$packageSource
-					Name = $package.ID
-					Version = $package.version
-					versionScheme = "MultiPartNumeric"
-					FromTrustedSource = $true
-					Source = $packageSource
-				}
+			# Return a new SWID based on the output from Croze
+			$metadata = Croze\Get-HomebrewPackageInfo -Name $package.Name
 
-				if ($request.Options.ContainsKey($script:Detailed)) {
-					$metadata = Cobalt\Get-WinGetPackageInfo -ID $package.ID -Version $package.Version -Source $packageSource
-					$swid.Summary = $metadata.Description
-					$swid.FullPath = $metadata.'Download URL'
-				}
+			# Cask installation doesn't return a parseable version, so we have to assume one from package metadata
+			$version = $metadata.Version ?? $metadata.Versions.Stable
 
-				New-SoftwareIdentity @swid
+			Write-Debug "Package identified: $($package.Name), $($version), $($metadata.Tap)"
+			$swid = @{
+				FastPackageReference = $package.Name+"#"+$version+"#"+$metadata.Tap
+				Name = $package.Name
+				Version = $version
+				versionScheme = "MultiPartNumeric"
+				Source = $metadata.Tap
 			}
+
+			New-SoftwareIdentity @swid
 		}
 	}
 }
