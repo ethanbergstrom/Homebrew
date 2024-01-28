@@ -21,7 +21,7 @@ function Find-HomebrewPackage {
 	Write-Debug ($LocalizedData.ProviderDebugMessage -f ('Find-HomebrewPackage'))
 
 	$options = $request.Options
-	[array]$RegisteredPackageSources = Croze\Get-HomebrewTap
+	[array]$RegisteredPackageSources = (Croze\Get-HomebrewTap) + @('homebrew/cask','homebrew/homebrew-core')
 
 	$selectedSource = $(
 		if ($options -And $options.ContainsKey('Source')) {
