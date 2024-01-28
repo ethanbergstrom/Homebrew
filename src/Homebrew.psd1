@@ -1,6 +1,6 @@
 @{
 	RootModule = 'Homebrew.psm1'
-	ModuleVersion = '0.0.1'
+	ModuleVersion = '0.0.2'
 	GUID = '59259a02-2afd-4016-ab22-9afd91fdc6ea'
 	Author = 'Ethan Bergstrom'
 	Copyright = ''
@@ -15,7 +15,7 @@
 		},
 		@{
 			ModuleName='Croze'
-			ModuleVersion='0.0.4'
+			ModuleVersion='0.1.1'
 		}
 	)
 	PrivateData = @{

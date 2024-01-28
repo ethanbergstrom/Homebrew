@@ -5,8 +5,8 @@ function Resolve-PackageSource {
 	Write-Debug ($LocalizedData.ProviderDebugMessage -f ('Resolve-PackageSource'))
 
 	# Get sources from Homebrew
-	Croze\Get-HomebrewTap | Croze\Get-HomebrewTapInfo | ForEach-Object {
+	(Croze\Get-HomebrewTap) + @([pscustomobject]@{Name='homebrew/cask'},[pscustomobject]@{Name='homebrew/core'}) | Croze\Get-HomebrewTapInfo | ForEach-Object {
 		Write-Debug "Source detected: $_"
-		New-PackageSource -Name $_.Name -Location $_.Remote -Trusted $true -Registered $_.installed
+		New-PackageSource -Name $_.Name -Location ($_.Remote ?? $_.Path) -Trusted $true -Registered $_.installed
 	}
 }

@@ -11,7 +11,7 @@ $script:Detailed = "Detailed"
 # Utility variables
 # Fast Package References are passed between cmdlets in the format of '<name>#<version>#<source>'
 # See https://github.com/OneGet/oneget/wiki/PackageProvider-Interface for additional details
-$script:FastReferenceRegex = "(?<name>[^#]*)#(?<version>[^\s]*)#(?<source>[^#]*)"
+$script:FastReferenceRegex = "(?<name>[^#]*)#(?<version>[^\s]*)#(?<source>[^#]*)#(?<type>[^#]*)"
 
 Import-LocalizedData LocalizedData -filename "Homebrew.Resource.psd1"
 

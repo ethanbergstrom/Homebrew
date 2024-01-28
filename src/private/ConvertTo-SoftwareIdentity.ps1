@@ -16,9 +16,16 @@ function ConvertTo-SoftwareIdentity {
 			# Cask installation doesn't return a parseable version, so we have to assume one from package metadata
 			$version = $metadata.Version ?? $metadata.Versions.Stable
 
-			Write-Debug "Package identified: $($package.Name), $($version), $($metadata.Tap)"
+			$type = @(
+				switch ($metadata) {
+					{$_.Cask} {'Cask'}
+					{$_.Formula} {'Formula'}
+				}
+			)
+
+			Write-Debug "Package identified: $($package.Name), $version, $($metadata.Tap), $type"
 			$swid = @{
-				FastPackageReference = $package.Name+"#"+$version+"#"+$metadata.Tap
+				FastPackageReference = $package.Name+"#"+$version+"#"+$metadata.Tap+"#"+$type
 				Name = $package.Name
 				Version = $version
 				versionScheme = "MultiPartNumeric"

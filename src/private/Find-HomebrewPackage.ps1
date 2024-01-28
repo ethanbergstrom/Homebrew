@@ -21,7 +21,7 @@ function Find-HomebrewPackage {
 	Write-Debug ($LocalizedData.ProviderDebugMessage -f ('Find-HomebrewPackage'))
 
 	$options = $request.Options
-	[array]$RegisteredPackageSources = Croze\Get-HomebrewTap
+	[array]$RegisteredPackageSources = (Croze\Get-HomebrewTap) + @([pscustomobject]@{Name='homebrew/cask'},[pscustomobject]@{Name='homebrew/core'})
 
 	$selectedSource = $(
 		if ($options -And $options.ContainsKey('Source')) {
@@ -56,7 +56,7 @@ function Find-HomebrewPackage {
 	Write-Verbose "Source selected: $selectedSource"
 
 	# Convert the PSCustomObject output from Croze into PackageManagement SWIDs, then filter results by any version requirements
-	Croze\Find-HomebrewPackage "$selectedSource/$Name" | Croze\Get-HomebrewPackageInfo | Select-Object -Property (
+	((Croze\Find-HomebrewPackage -Name "$selectedSource/$Name" -Cask) ?? (Croze\Find-HomebrewPackage -Name "$selectedSource/$Name" -Formula)) | Croze\Get-HomebrewPackageInfo | Select-Object -Property (
 		@{
 			Name = 'Name'
 			Expression = {$_.Token ?? $_.Name}
@@ -66,6 +66,12 @@ function Find-HomebrewPackage {
 		},@{
 			Name = 'Source'
 			Expression = {$_.Tap}
+		},@{
+			Name = 'Cask'
+			Expression = {$_.Cask}
+		},@{
+			Name = 'Formula'
+			Expression = {$_.Formula}
 		}
 	 ) | Where-Object {Test-PackageVersion -Package $_ -RequiredVersion $RequiredVersion -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion} | ConvertTo-SoftwareIdentity
 }

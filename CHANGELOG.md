@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Unreleased
 
+## 0.0.2 - 2024-01-28 - Croze Upgrade
+### Fixed
+* Consume new version of Croze to handle Homebrew CLI changes
+
 ## 0.0.1 - 2022-07-02 - Initial Release
 ### Added
 * Forked from existing PackageManagement providers and adapted to Homebrew
