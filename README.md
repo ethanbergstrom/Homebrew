@@ -14,14 +14,14 @@ Note: Please do **not** use `Import-Module` with Package Management providers, a
 ```PowerShell
 Find-Package vlc -Provider Homebrew
 
-Find-Package tmux -Source homebrew/homebrew-core -Provider Homebrew -Detailed
+Find-Package tmux -Source homebrew/core -Provider Homebrew -Detailed
 ```
 
 ### Install a package
 ```PowerShell
 Find-Package vlc -Provider Homebrew | Install-Package -Force
 
-Install-Package tmux -Source homebrew/homebrew-core -Provider Homebrew -Force
+Install-Package tmux -Source homebrew/core -Provider Homebrew -Force
 ```
 
 ### Get list of installed packages (with wildcard search support)

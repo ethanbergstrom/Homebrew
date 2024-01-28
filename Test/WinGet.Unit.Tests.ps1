@@ -10,7 +10,7 @@ Describe 'basic package search operations' {
 	Context 'formula' {
 		BeforeAll {
 			$package = 'tmux'
-			$source = 'homebrew/homebrew-core'
+			$source = 'homebrew/core'
 		}
 		It 'searches for the latest version of a package' {
 			Find-Package -Provider $Homebrew -Name $package -Source $source | Where-Object {$_.Name -contains $package} | Should -Not -BeNullOrEmpty
@@ -30,7 +30,7 @@ Describe 'DSC-compliant package installation and uninstallation' {
 	Context 'formula' {
 		BeforeAll {
 			$package = 'tmux'
-			$source = 'homebrew/homebrew-core'
+			$source = 'homebrew/core'
 		}
 
 		It 'searches for a specific version of a package' {
@@ -70,7 +70,7 @@ Describe 'pipeline-based package installation and uninstallation' {
 	Context 'formula' {
 		BeforeAll {
 			$package = 'tmux'
-			$source = 'homebrew/homebrew-core'
+			$source = 'homebrew/core'
 		}
 
 		It 'searches for and silently installs the latest version of a package' {
@@ -98,7 +98,7 @@ Describe 'version tests' {
 	Context 'formula' {
 		BeforeAll {
 			$package = 'tmux'
-			$source = 'homebrew/homebrew-core'
+			$source = 'homebrew/core'
 			$version = '2.0'
 		}
 
