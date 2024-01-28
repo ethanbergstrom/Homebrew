@@ -29,7 +29,7 @@ function Get-InstalledPackage {
 
 	# Convert the PSCustomObject output from Croze into PackageManagement SWIDs, then filter results by version requirements
 	# This provides wildcard search behavior for locally installed packages, which Homebrew lacks
-	Croze\Get-HomebrewPackage |
+	(Get-HomebrewPackage -Cask) + (Get-HomebrewPackage -Formula) | Select-Object Name, Version, Cask, Formula |
 		Where-Object {-Not $Name -Or ($_.Name -Like $Name)} |
 			Where-Object {Test-PackageVersion -Package $_ -RequiredVersion $RequiredVersion -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion} |
 				ConvertTo-SoftwareIdentity

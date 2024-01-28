@@ -20,7 +20,16 @@ function Uninstall-Package {
 			-ErrorCategory InvalidArgument
 	}
 
-	Croze\Uninstall-HomebrewPackage -Name $Matches.name
+	$uninstallArgs = @{
+		Name = $Matches.source+'/'+$Matches.name
+	}
+
+	switch $Matches.type {
+		'Cask' {$uninstallArgs.Cask = $true}
+		'Formula' {$uninstallArgs.Formula = $true}
+	}
+
+	Croze\Uninstall-HomebrewPackage @uninstallArgs
 
 	# Croze doesn't return any output on successful uninstallation, so we have to make up a new SWID to satisfy PackageManagement
 	ConvertTo-SoftwareIdentity -InputObject $Matches
