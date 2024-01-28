@@ -56,7 +56,7 @@ function Find-HomebrewPackage {
 	Write-Verbose "Source selected: $selectedSource"
 
 	# Convert the PSCustomObject output from Croze into PackageManagement SWIDs, then filter results by any version requirements
-	((Croze\Find-HomebrewPackage "$selectedSource/$Name" -Cask) ?? (Croze\Find-HomebrewPackage "$selectedSource/$Name" -Formula)) | Croze\Get-HomebrewPackageInfo | Select-Object -Property (
+	((Croze\Find-HomebrewPackage -Name "$selectedSource/$Name" -Cask) ?? (Croze\Find-HomebrewPackage -Name "$selectedSource/$Name" -Formula)) | Croze\Get-HomebrewPackageInfo | Select-Object -Property (
 		@{
 			Name = 'Name'
 			Expression = {$_.Token ?? $_.Name}
