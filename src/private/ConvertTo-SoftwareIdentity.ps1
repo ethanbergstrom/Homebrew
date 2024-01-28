@@ -17,12 +17,9 @@ function ConvertTo-SoftwareIdentity {
 			$version = $metadata.Version ?? $metadata.Versions.Stable
 
 			$type = @(
-				if $metadata.Cask {
-					'Cask'
-				} elseif $metadata.Formula {
-					'Formula'
-				} else {
-					throw 'Ambiguous package metadata'
+				switch ($metadata) {
+					{$_.Cask} {'Cask'}
+					{$_.Formula} {'Formula'}
 				}
 			)
 

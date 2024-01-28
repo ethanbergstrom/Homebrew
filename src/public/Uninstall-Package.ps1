@@ -24,7 +24,7 @@ function Uninstall-Package {
 		Name = $Matches.source+'/'+$Matches.name
 	}
 
-	switch $Matches.type {
+	switch ($Matches.type) {
 		'Cask' {$uninstallArgs.Cask = $true}
 		'Formula' {$uninstallArgs.Formula = $true}
 	}

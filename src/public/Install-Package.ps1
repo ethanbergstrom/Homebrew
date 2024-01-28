@@ -33,7 +33,7 @@ function Install-Package {
 		Name = $Matches.source+'/'+$Matches.name
 	}
 
-	switch $Matches.type {
+	switch ($Matches.type) {
 		'Cask' {$installArgs.Cask = $true}
 		'Formula' {$installArgs.Formula = $true}
 	}
